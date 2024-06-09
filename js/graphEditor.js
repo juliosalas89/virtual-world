@@ -27,7 +27,7 @@ class GraphEditor {
     }
 
     #handleMouseMove (event) {
-        this.mousePosition = this.viewport.getMousePosition(event)
+        this.mousePosition = this.viewport.getMousePosition(event, true)
         this.hoveredPoint = getHoveredtPoint(this.mousePosition, this.graph.points, 10 * this.viewport.zoom)
         if (this.dragging) {
             this.selectedPoint.x = this.mousePosition.x
@@ -62,6 +62,12 @@ class GraphEditor {
         this.graph.removePoint(point)
         this.hoveredPoint = null
         this.selectedPoint == point && (this.selectedPoint = null)
+    }
+
+    dispose () {
+        this.selectedPoint = null
+        this.hoveredPoint = null
+        this.graph.dispose()
     }
 
     display () {

@@ -4,6 +4,17 @@ class Graph {
         this.segments = segments
     }
 
+    static load (info) {
+        const savedPoints = info.points.map(point => new Point(point.x, point.y))
+        const savedSegments = info.segments.map(segment => {
+            return new Segment(
+                savedPoints.find(p => p.equals(segment.p1)), 
+                savedPoints.find(p => p.equals(segment.p2))
+            )
+        })
+        return new Graph(savedPoints, savedSegments)
+    }
+
     addPoint(point) {
         this.points.push(point)
     }

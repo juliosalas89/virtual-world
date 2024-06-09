@@ -7,12 +7,18 @@
     <body>
         <h1>World Editor</h1>
         <canvas id="mainCanvas"></canvas>
+        <div id="controls">
+            <button onclick="dispose()">Clear All</button>
+            <button onclick="save()">Save</button>
+        </div>
 
         <script src="js/graphEditor.js"></script>
         <script src="js/viewport.js"></script>
         <script src="js/math/graph.js"></script>
         <script src="js/math/utils.js"></script>
+        <script src="js/primitives/envelope.js"></script>
         <script src="js/primitives/point.js"></script>
+        <script src="js/primitives/polygon.js"></script>
         <script src="js/primitives/segment.js"></script>
         <script>
             mainCanvas.width = 600
@@ -20,29 +26,31 @@
 
             const ctx = mainCanvas.getContext('2d')
 
-            const p1 = new Point(100, 100)
-            const p2 = new Point(200, 200)
-            const p3 = new Point(300, 100)
-            const p4 = new Point(400, 200)
+            const graphString = localStorage.getItem('graph')
+            const graphInfo = graphString ? JSON.parse(graphString) : null
+            
 
-            const s1 = new Segment(p1, p2)
-            const s2 = new Segment(p2, p3)
-            const s3 = new Segment(p3, p4)
+            const graph = graphInfo ? Graph.load(graphInfo) : new Graph()
 
-            const graph = new Graph([p1, p2, p3, p4], [s1, s2, s3])
             const viewport = new Viewport(mainCanvas, graph)
             const graphEditor = new GraphEditor(viewport, graph)
 
-            function animate () {
-                ctx.clearRect(0, 0, mainCanvas.width, mainCanvas.height)
-                ctx.save()
-                ctx.scale(1/ viewport.zoom, 1/ viewport.zoom)
+            const animate = () => {
+                viewport.reset()
                 graphEditor.display()
-                ctx.restore()
+                new Envelope(graph.segments[0], 80).draw(ctx)
                 requestAnimationFrame(animate)
             }
 
             animate()
+
+            const dispose = () => {
+                graphEditor.dispose()
+            }
+
+            const save = () => {
+                localStorage.setItem('graph', JSON.stringify(graph))
+            }
         </script>
     </body>
 </html>
