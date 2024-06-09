@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>World Editor</title>
+        <link rel="stylesheet" href="styles.css">
+    </head>
+    <body>
+        <h1>World Editor</h1>
+        <canvas id="mainCanvas"></canvas>
+
+        <script src="js/graphEditor.js"></script>
+        <script src="js/viewport.js"></script>
+        <script src="js/math/graph.js"></script>
+        <script src="js/math/utils.js"></script>
+        <script src="js/primitives/point.js"></script>
+        <script src="js/primitives/segment.js"></script>
+        <script>
+            mainCanvas.width = 600
+            mainCanvas.height = 600
+
+            const ctx = mainCanvas.getContext('2d')
+
+            const p1 = new Point(100, 100)
+            const p2 = new Point(200, 200)
+            const p3 = new Point(300, 100)
+            const p4 = new Point(400, 200)
+
+            const s1 = new Segment(p1, p2)
+            const s2 = new Segment(p2, p3)
+            const s3 = new Segment(p3, p4)
+
+            const graph = new Graph([p1, p2, p3, p4], [s1, s2, s3])
+            const viewport = new Viewport(mainCanvas, graph)
+            const graphEditor = new GraphEditor(viewport, graph)
+
+            function animate () {
+                ctx.clearRect(0, 0, mainCanvas.width, mainCanvas.height)
+                ctx.save()
+                ctx.scale(1/ viewport.zoom, 1/ viewport.zoom)
+                graphEditor.display()
+                ctx.restore()
+                requestAnimationFrame(animate)
+            }
+
+            animate()
+        </script>
+    </body>
+</html>
