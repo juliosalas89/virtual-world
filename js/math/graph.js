@@ -1,3 +1,4 @@
+// Group of points and segments
 class Graph {
     constructor(points = [], segments = []) {
         this.points = points

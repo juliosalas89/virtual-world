@@ -1,3 +1,4 @@
+// generates and distribute points around the two ponits of a segment(skeleton), creating a polygon 
 class Envelope {
     constructor (skeleton, width, roundness = 1) {
         this.skeleton = skeleton
@@ -5,6 +6,7 @@ class Envelope {
     }
 
     #generatePolygon (width, roundness) {
+        if(!this.skeleton) return
         const { p1, p2 } = this.skeleton
         const radius = width / 2
         const alpha = angle(substract(p2, p1))
@@ -22,7 +24,7 @@ class Envelope {
         return new Polygon(points)
     }
 
-    draw () {
-        this.polygon.draw(ctx)
+    draw (ctx) {
+        this.polygon && this.polygon.draw(ctx)
     }
 }

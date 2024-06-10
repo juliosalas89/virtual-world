@@ -31,3 +31,22 @@ function translate (point, angle, distance) {
 function angle (cathetos) {
     return Math.atan2(cathetos.y, cathetos.x)
 }
+
+function getIntersection (segment1, segment2) {
+    const { p1: A, p2: B } = segment1
+    const { p1: C, p2: D } = segment2
+
+    const tTop = (D.x - C.x) * (A.y - C.y) - (D.y - C.y) * (A.x - C.x)
+    const uTop = (C.y - A.y) * (A.x - B.x) - (C.x - A.x) * (A.y - B.y)
+    const bottom = (D.y - C.y) * (B.x - A.x) - (D.x - C.x) * (B.y - A.y)
+    
+    const t = bottom && (tTop / bottom)
+    const u = bottom && (uTop / bottom)
+    const condition = t && u && t >= 0 && t <= 1 && u >= 0 && u <= 1
+    
+    return condition && {
+        x: A.x + t * (B.x - A.x),
+        y: A.y + t * (B.y - A.y),
+        offset: t
+    }
+}

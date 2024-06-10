@@ -1,3 +1,4 @@
+// All the function related with visualization, zoom, move screen, adjust mouse position to scale, etc
 class Viewport {
     constructor(canvas) {
         this.canvas = canvas

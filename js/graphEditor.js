@@ -1,3 +1,4 @@
+// Al the functions related with editing a graph
 class GraphEditor {
     constructor(viewport, graph) {
         this.viewport = viewport
@@ -9,6 +10,7 @@ class GraphEditor {
         this.selectedPoint = null
         this.hoveredPoint = null
         this.dragging = false
+        this.leftMopuseDown = false
 
         this.#addEventListeners()
     }
@@ -19,7 +21,7 @@ class GraphEditor {
         document.addEventListener('keydown', this.#handleEscKeyDown.bind(this))
         this.canvas.addEventListener('mousemove', this.#handleMouseMove.bind(this))
         this.canvas.addEventListener('mousedown', this.#handleMouseDown.bind(this))
-        this.canvas.addEventListener('mouseup', () => (this.dragging = false))
+        this.canvas.addEventListener('mouseup', this.#handleMouseUp.bind(this))
     }
 
     #handleEscKeyDown (event) {
@@ -27,12 +29,14 @@ class GraphEditor {
     }
 
     #handleMouseMove (event) {
+        console.log('mouse move')
         this.mousePosition = this.viewport.getMousePosition(event, true)
         this.hoveredPoint = getHoveredtPoint(this.mousePosition, this.graph.points, 10 * this.viewport.zoom)
         if (this.dragging) {
             this.selectedPoint.x = this.mousePosition.x
             this.selectedPoint.y = this.mousePosition.y
         }
+        if(this.leftMopuseDown) this.dragging = true
     }
 
     #handleMouseDown (event) {
@@ -43,13 +47,21 @@ class GraphEditor {
 
         if(event.button === 0) { // left click
             if (this.hoveredPoint) {
-                this.dragging = true
+                this.leftMopuseDown = true
                 this.#selectPoint(this.hoveredPoint)
                 return
             }
             this.graph.addPoint(this.mousePosition)
             this.#selectPoint(this.mousePosition)
             this.hoveredPoint = this.mousePosition
+        }
+    }
+    
+    #handleMouseUp () {
+        this.leftMopuseDown = false
+        if (this.dragging) {
+            this.selectedPoint = null
+            this.dragging = false
         }
     }
 
