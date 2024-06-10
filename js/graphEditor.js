@@ -10,7 +10,7 @@ class GraphEditor {
         this.selectedPoint = null
         this.hoveredPoint = null
         this.dragging = false
-        this.leftMopuseDown = false
+        this.leftMouseDown = false
 
         this.#addEventListeners()
     }
@@ -29,14 +29,13 @@ class GraphEditor {
     }
 
     #handleMouseMove (event) {
-        console.log('mouse move')
         this.mousePosition = this.viewport.getMousePosition(event, true)
         this.hoveredPoint = getHoveredtPoint(this.mousePosition, this.graph.points, 10 * this.viewport.zoom)
         if (this.dragging) {
             this.selectedPoint.x = this.mousePosition.x
             this.selectedPoint.y = this.mousePosition.y
         }
-        if(this.leftMopuseDown) this.dragging = true
+        if(this.leftMouseDown) this.dragging = true
     }
 
     #handleMouseDown (event) {
@@ -47,7 +46,7 @@ class GraphEditor {
 
         if(event.button === 0) { // left click
             if (this.hoveredPoint) {
-                this.leftMopuseDown = true
+                this.leftMouseDown = true
                 this.#selectPoint(this.hoveredPoint)
                 return
             }
@@ -58,7 +57,7 @@ class GraphEditor {
     }
     
     #handleMouseUp () {
-        this.leftMopuseDown = false
+        this.leftMouseDown = false
         if (this.dragging) {
             this.selectedPoint = null
             this.dragging = false
