@@ -5,19 +5,66 @@ class Polygon {
         this.polygonSegments = points.map((point, index) => {
             const nextIndex = (index + 1) % points.length
             return new Segment(point, points[nextIndex])
-        })
+            })
+    }
+    static union (polygons) {
+        Polygon.multiBreak(polygons)
+        const keptSegments = []
+        // for (let i = 0; i < polygons.length; i++) {
+        //     const segments = polygons[i].polygonSegments
+        //     for (let j = 0; j < segments.length; j++) {
+        //         const segment = segments[j]
+        //         const intersection = polygons.some((polygon, index) => {
+        //             if (index !== i) {
+        //                 return polygon.polygonSegments.some(otherSegment => {
+        //                     const int = getIntersection(segment, otherSegment)
+        //                     if (int && int.offset !== 1 && int.offset !== 0) {
+        //                         keptSegments.push(new Segment(segment.p1, int))
+        //                         return true
+        //                     }
+        //                 })
+        //             }
+        //         })
+        //         if (!intersection) {
+        //             keptSegments.push(segment)
+        //         }
+        //     }
+        // } 
     }
 
+    static multiBreak (polygons) {
+        for(let i = 0; i < polygons.length -1; i++) {
+            for(let j = (i + 1); j < polygons.length; j++) {
+                Polygon.break(polygons[i], polygons[j])
+            }
+        }
+    }
     static break (polygon1, polygon2) {
         const segments1 = polygon1.polygonSegments
         const segments2 = polygon2.polygonSegments
-        const intersections = segments1.map(segment1 => {
-            return segments2.map(segment2 => {
-                const int = getIntersection(segment1, segment2)
-                return int && int.offset !== 1 && int.offset !== 0 && new Point(int.x, int.y)
-            })
-        }).flat().filter(point => point).map(point => new Point(point.x, point.y))
-        return intersections
+        for (let i = 0; i < segments1.length; i++) {
+            for (let j = 0; j < segments2.length; j++) {
+                const int = getIntersection(segments1[i], segments2[j])
+                if (int && int.offset !==1 && int.offset !== 0) {
+                    const intPoint = new Point(int.x, int.y)
+
+                    // Now we replace the end of the segment with the intersection point, so that the polygon is broken
+                    let aux = segments1[i].p2
+                    segments1[i].p2 = intPoint
+                    // And we add a new segment in the missing part of the polygon
+                    segments1.splice(i+1, 0, new Segment(intPoint, aux))
+                    // this way we broke the segment in two, right in the intersection point
+                    // and we repeat the proccess for the other polygon
+                    aux = segments2[j].p2
+                    segments2[j].p2 = intPoint
+                    segments2.splice(j+1, 0, new Segment(intPoint, aux))
+                }
+            }
+        }
+    }
+
+    drawSegments (ctx) {
+        this.polygonSegments.forEach(segment => segment.draw(ctx, { color: getRandomColor()}))
     }
 
     draw(ctx, { stroke = 'blue', lineWidth = 2, fill = 'rgba(0, 0, 255, 0.3)' } = {}) {
