@@ -24,8 +24,7 @@ class Envelope {
         return new Polygon(points)
     }
 
-    draw (ctx) {
-        this.polygon && this.polygon.draw(ctx)
-        this.polygon && this.polygon.drawSegments(ctx)
+    draw (ctx, options) {
+        this.polygon && this.polygon.draw(ctx, options)
     }
 }

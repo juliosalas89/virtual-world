@@ -63,9 +63,9 @@ class Polygon {
         return nrOfIntersections % 2
     }
 
-    drawSegments (ctx) {
-        this.polygonSegments.forEach(segment => segment.draw(ctx, { color: getRandomColor()}))
-    }
+    // drawSegments (ctx) {
+    //     this.polygonSegments.forEach(segment => segment.draw(ctx, { color: getRandomColor()}))
+    // }
 
     draw(ctx, { stroke = 'blue', lineWidth = 2, fill = 'rgba(0, 0, 255, 0.3)' } = {}) {
         ctx.beginPath()

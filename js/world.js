@@ -20,7 +20,8 @@ class World {
     }
 
     draw(ctx) {
-        this.envelopes.forEach(envelope => envelope.draw(ctx))
+        this.envelopes.forEach(envelope => envelope.draw(ctx, { fill: '#BBB', stroke: '#BBB', lineWidth: 15 }))
+        this.graph.segments.forEach(segment => segment.draw(ctx, { color: 'white', width: 4, dash: [10, 10] }))
         this.roadBorders.forEach(border => border.draw(ctx, { color: 'white', width: 4}))
     }
 }
