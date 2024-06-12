@@ -61,7 +61,7 @@ class Graph {
     }
 
     draw(ctx) {
-        this.segments.forEach(seg => seg.draw(ctx))
+        // this.segments.forEach(seg => seg.draw(ctx))
         this.points.forEach(point => point.draw(ctx))
     }
 }

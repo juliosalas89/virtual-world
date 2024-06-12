@@ -85,7 +85,7 @@ class GraphEditor {
         this.graph.draw(this.ctx)
         this.hoveredPoint && this.hoveredPoint.draw(this.ctx, { fill: true })
         if (this.selectedPoint) {
-            new Segment(this.selectedPoint, this.hoveredPoint || this.mousePosition).draw(this.ctx, { color: 'yellow',  width: 1, dash: [3, 3] })
+            new Segment(this.selectedPoint, this.hoveredPoint || this.mousePosition).draw(this.ctx, { color: 'black',  width: 1, dash: [3, 3] })
             this.selectedPoint.draw(this.ctx, { outline: true })
         }
     }
