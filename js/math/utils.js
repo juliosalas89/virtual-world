@@ -21,6 +21,10 @@ function scale (point, scaleFactor) {
     return new Point(point.x * scaleFactor, point.y * scaleFactor)
 }
 
+function average (p1, p2) {
+    return new Point((p1.x + p2.x) / 2, (p1.y + p2.y) / 2)
+}
+
 function translate (point, angle, distance) {
     return new Point(
         point.x + distance * Math.cos(angle),
@@ -32,10 +36,7 @@ function angle (cathetos) {
     return Math.atan2(cathetos.y, cathetos.x)
 }
 
-function getIntersection (segment1, segment2) {
-    const { p1: A, p2: B } = segment1
-    const { p1: C, p2: D } = segment2
-
+function getIntersection (A, B, C, D) {
     const tTop = (D.x - C.x) * (A.y - C.y) - (D.y - C.y) * (A.x - C.x)
     const uTop = (C.y - A.y) * (A.x - B.x) - (C.x - A.x) * (A.y - B.y)
     const bottom = (D.y - C.y) * (B.x - A.x) - (D.x - C.x) * (B.y - A.y)
