@@ -60,6 +60,10 @@ class Graph {
         this.segments.length = 0
     }
 
+    hash () {
+        return JSON.stringify(this)
+    }
+
     draw(ctx) {
         // this.segments.forEach(seg => seg.draw(ctx))
         this.points.forEach(point => point.draw(ctx))

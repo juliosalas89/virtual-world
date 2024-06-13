@@ -13,6 +13,14 @@ class Segment {
         return this.p1.equals(point) || this.p2.equals(point)
     }
 
+    length () {
+        return distance(this.p1, this.p2)
+    }
+
+    directionVector () {
+        return normalize(substract(this.p2, this.p1))
+    }
+
     draw(ctx, { width = 2, color = 'black', dash = [] } = {}) {
         ctx.beginPath()
         ctx.strokeStyle = color

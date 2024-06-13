@@ -9,10 +9,14 @@ class Polygon {
     }
     static union (polygons) {
         Polygon.multiBreak(polygons)
-        const keptSegments =  polygons.reduce((acc, polygon1, i) => {
-            const segmentsToKeep = polygon1.polygonSegments.filter(segment => !polygons.some((polygon2, j) => i !== j && polygon2.containsSegment(segment)))
-            return [...acc, ...segmentsToKeep]
-        }, [])
+        const keptSegments = []
+        polygons.forEach((polygon1, i) => {
+            polygon1.polygonSegments.forEach(segment => {
+                const contained = polygons.some((polygon2, j) => i !== j && polygon2.containsSegment(segment))
+                !contained && keptSegments.push(segment)
+            })
+        })
+        
         return keptSegments
     }
 
@@ -52,15 +56,22 @@ class Polygon {
         return this.containsPoint(midPoint)
     }
 
+    intersectsPolygon(polygon) {
+        return this.polygonSegments.some(segment => {
+            return polygon.polygonSegments.some(otherSegment => getIntersection(segment.p1, segment.p2, otherSegment.p1, otherSegment.p2))
+        })
+    }
+
     containsPoint (point) {
         // We generate a point that is outside the polygon and we draw a segment from this point to the point we want to check
         // If this imaginary segment intersect the polygon an odd number of times, the point is inside the polygon
         const outerPoint = new Point(-1000, -1000)
-        const nrOfIntersections = this.polygonSegments.reduce((acc, segment) => {
+        let nuymberOfIntersections = 0
+        this.polygonSegments.forEach(segment => {
             const int = getIntersection(outerPoint, point, segment.p1, segment.p2)
-            return int ? acc + 1 : acc
-        }, 0)
-        return nrOfIntersections % 2
+            int && nuymberOfIntersections++
+        })
+        return nuymberOfIntersections % 2
     }
 
     // drawSegments (ctx) {
