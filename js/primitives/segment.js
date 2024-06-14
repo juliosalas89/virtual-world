@@ -21,6 +21,27 @@ class Segment {
         return normalize(substract(this.p2, this.p1))
     }
 
+    projectPoint(point) {
+        const a = substract(point, this.p1)
+        const b = substract(this.p2, this.p1)
+        const normB = normalize(b)
+        const scaler = dotProduct(a, normB)
+        const projection = {
+            point: add(this.p1, scale(normB, scaler)),
+            offset: scaler / magnitud(b)
+        }
+        return projection
+    }
+
+    distanceToPoint(point) {
+        const projection = this.projectPoint(point)
+        if(projection.offset > 0 && projection.offset < 1) return distance(point, projection.point)
+        
+        const d1 = distance(this.p1, point)
+        const d2 = distance(this.p2, point)
+        return Math.min(d1, d2)
+    }
+
     draw(ctx, { width = 2, color = 'black', dash = [] } = {}) {
         ctx.beginPath()
         ctx.strokeStyle = color

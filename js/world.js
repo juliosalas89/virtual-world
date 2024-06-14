@@ -6,7 +6,8 @@ class World {
         roadRoundness = 10,
         buildingWidth = 150,
         buildingMinLength = 150,
-        spacing = 50
+        spacing = 80,
+        treeSize = 160
     ) {
         this.graph = graph
         this.roadWIdth = roadWIdth
@@ -14,6 +15,7 @@ class World {
         this.buildingWidth = buildingWidth
         this.buildingMinLength = buildingMinLength
         this.spacing = spacing
+        this.treeSize = treeSize
 
         this.envelopes = []
         this.roadBorders = []
@@ -32,23 +34,42 @@ class World {
         this.trees = this.#generateTrees()
     }
 
-    #generateTrees(count = 10) {
+    #generateTrees() {
         const points = [
             ...this.roadBorders.map(segment => [segment.p1, segment.p2]).flat(),
-            ...this.buildings.map(bases => bases.points).flat()
+            ...this.buildings.map(building => building.base.points).flat()
         ] 
         const left = Math.min(...points.map(point => point.x))
         const right = Math.max(...points.map(point => point.x))
         const top = Math.min(...points.map(point => point.y))
         const bottom = Math.max(...points.map(point => point.y))
 
+        this.forbidenAreas = [
+            ...this.buildings.map(building => building.base),
+            ...this.envelopes.map(envelope => envelope.polygon)
+        ]
+        let tryCount = 0
         const trees = []
-        while(trees.length < count) {
+        while(tryCount < 100) {
+            tryCount++
             const treeLocation = new Point(
                 lerp(left, right, Math.random()),
                 lerp(top, bottom, Math.random())
             )
-            trees.push(treeLocation)
+            // Discard trees inside buildings or roads
+            let discard = !this.forbidenAreas.length || this.forbidenAreas.some(area => area.containsPoint(treeLocation) || area.distanceToPoint(treeLocation) < this.treeSize)
+            if(discard) continue
+            
+            // Discard trees too close to other trees
+            discard = trees.some(tree => distance(treeLocation, tree.center) < this.treeSize)
+            if(discard) continue
+            
+            // Discard trees too far to other things
+            discard = !this.forbidenAreas.some(area => area.distanceToPoint(treeLocation) < this.treeSize * 3)
+            if(discard) continue
+
+            trees.push(new Tree(treeLocation, this.treeSize))
+            tryCount = 0
         }
         return trees
     }
@@ -78,25 +99,26 @@ class World {
         const bases = supports.map(support => {
             return new Envelope(support, this.buildingWidth).polygon
         })
-
+        const eps = 0.001
         for (let i = 0; i < bases.length - 1; i++) {
             for (let j = i + 1; j < bases.length; j++) {
-                if(bases[i].intersectsPolygon(bases[j])) {
+                if(bases[i].intersectsPolygon(bases[j]) || bases[i].distanceToPolygon(bases[j]) < this.spacing - eps) {
                     bases.splice(j, 1)
                     j--
                 }
             }
         }
-        
 
-        return bases
+        return bases.map(base => new Building(base))
     }
 
-    draw(ctx) {
+    draw(ctx, viewPoint) {
         this.envelopes.forEach(envelope => envelope.draw(ctx, { fill: '#BBB', stroke: '#BBB', lineWidth: 15 }))
         this.graph.segments.forEach(segment => segment.draw(ctx, { color: 'white', width: 4, dash: [10, 10] }))
         this.roadBorders.forEach(border => border.draw(ctx, { color: 'white', width: 4}))
-        this.buildings.forEach(elem => elem.draw(ctx))
-        this.trees.forEach(tree => tree.draw(ctx))
+        // now we put buildings and trees together so we can draw them in the correct order
+        const itemsToDraw = [...this.buildings, ...this.trees]
+        itemsToDraw.sort((a, b) => b.base.distanceToPoint(viewPoint) - a.base.distanceToPoint(viewPoint))
+        itemsToDraw.forEach(item => item.draw(ctx, viewPoint))
     }
 }

@@ -51,6 +51,14 @@ class Polygon {
         }
     }
 
+    distanceToPoint (point) {
+        return Math.min(...this.polygonSegments.map(segment => segment.distanceToPoint(point)))
+    }
+
+    distanceToPolygon (polygon) {
+        return Math.min(...this.points.map(point => polygon.distanceToPoint(point)))
+    }
+
     containsSegment (segment) {
         const midPoint = average(segment.p1, segment.p2)
         return this.containsPoint(midPoint)

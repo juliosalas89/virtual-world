@@ -17,13 +17,15 @@
         <script src="js/viewport.js"></script>
         <script src="js/math/graph.js"></script>
         <script src="js/math/utils.js"></script>
+        <script src="js/items/building.js"></script>
+        <script src="js/items/tree.js"></script>
         <script src="js/primitives/envelope.js"></script>
         <script src="js/primitives/point.js"></script>
         <script src="js/primitives/polygon.js"></script>
         <script src="js/primitives/segment.js"></script>
         <script>
-            mainCanvas.width = 600
-            mainCanvas.height = 600
+            mainCanvas.width = 1500
+            mainCanvas.height = 800
 
             const ctx = mainCanvas.getContext('2d')
 
@@ -46,8 +48,9 @@
                     world.generate()
                     graphHash = graph.hash()
                 }
-                world.draw(ctx)
-                ctx.globalAlpha = 0.2
+                const viewPoint = scale(viewport.getOffset(), -1)
+                world.draw(ctx, viewPoint)
+                ctx.globalAlpha = 0.4
                 graphEditor.display()
                 requestAnimationFrame(animate)
             }
